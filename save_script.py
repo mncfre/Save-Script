@@ -1,37 +1,35 @@
-#this script is intented to be use with worlflow for iOS, the workflow is executed from the Open In... option
-#and save .py scripts to Pythonista.
-#the workflow link is: https://workflow.is/workflows/8cdee57f79664205a6a565c9cbdb3d48
-import sys
-import clipboard
-import os
-import console
+''' This script allows you to copy a .py script to the iOS clipboard and then use Open In...
+to have that script saved in Pythonista.  This requires both the Workflow and Pythonista apps
+and the workflow at https://workflow.is/workflows/8cdee57f79664205a6a565c9cbdb3d48 '''
 
-def save(name,text):
-	filename=name
-	extension='py'
-	finalname=filename+'.'+extension
-	filenum=1
-	while os.path.isfile(finalname) is True:
-		finalname = filename + ' ({})'.format(str(filenum)) + '.' + extension
-		filenum += 1
-	
-	#print finalname
-	f = open(finalname,'wb')
-	f.write(text)
-	f.close()
-	#clipboard.set(finalname)
-	return finalname
-	
+import clipboard
+import console
+import os
+import sys
+
+def save(filename, text):
+    root, _ = os.path.splitext(filename)
+    extension = '.py'
+    filename = root + extension
+    filenum = 1
+    while os.path.isfile(filename):
+        filename = '{} {}{}'.format(root, filenum, extension)
+        filenum += 1
+    #print(finalname)
+    with open(filename,'w') as f:
+        f.write(text)
+    #clipboard.set(filename)
+    return filename
+
 def main():
-	console.clear()
-	print 'Wait a Moment Please!'
-	text=clipboard.get()
-	name=sys.argv[1]
-	finalname=''
-	finalname=save(name,text)
-	alert='Done!\nFile Saved as:\n'+finalname
-	console.set_font('Futura', 16)
-	print alert
-	
+    text = clipboard.get()
+    assert text, 'No text on the clipboard!'
+    filename = sys.argv[1]
+    console.clear()
+    print('Wait a Moment Please!')
+    filename = save(filename, text)
+    console.set_font('Futura', 16)
+    print('Done!\nFile Saved as:\n' + filename)
+
 if __name__ == '__main__':
-	main()
+    main()
