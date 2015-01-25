@@ -7,29 +7,34 @@ import console
 import os
 import sys
 
-def save(filename, text):
-    root, _ = os.path.splitext(filename)
-    extension = '.py'
-    filename = root + extension
-    filenum = 1
-    while os.path.isfile(filename):
-        filename = '{} {}{}'.format(root, filenum, extension)
-        filenum += 1
-    #print(finalname)
-    with open(filename,'w') as f:
-        f.write(text)
-    #clipboard.set(filename)
-    return filename
+def save(filename, text, ext):
+	root, _ = os.path.splitext(filename)
+	extension = ext
+	filename = root + extension
+	filenum = 1
+	while os.path.isfile(filename):
+		filename = '{} {}{}'.format(root, filenum, extension)
+		filenum += 1
+	#print(finalname)
+	with open(filename,'w') as f:
+		f.write(text)
+	#clipboard.set(filename)
+	return filename
 
 def main():
-    text = clipboard.get()
-    assert text, 'No text on the clipboard!'
-    filename = sys.argv[1]
-    console.clear()
-    print('Wait a Moment Please!')
-    filename = save(filename, text)
-    console.set_font('Futura', 16)
-    print('Done!\nFile Saved as:\n' + filename)
-
+	resp = console.alert('Alert!', 'Choose File Extension', '.py', '.pyui', hide_cancel_button=False)
+	if resp==1:
+		ext = '.py'
+	elif resp==2:
+		ext = '.pyui'
+	text = clipboard.get()
+	assert text, 'No text on the clipboard!'
+	filename = sys.argv[1]
+	console.clear()
+	print('Wait a Moment Please!')
+	filename = save(filename, text, ext)
+	console.set_font('Futura', 16)
+	print('Done!\nFile Saved as:\n' + filename)
+	
 if __name__ == '__main__':
-    main()
+	main()
